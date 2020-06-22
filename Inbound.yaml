@@ -1,0 +1,314 @@
+openapi: 3.0.0
+info:
+  title: BY Inbound Services
+  description: 'This document provides the services encompassing BY Inbound services'
+  version: "1.0.0"
+tags:
+  - name: inbound-service
+    description: Everything about Inbound Services
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+servers:
+  - url: https://ecom-inbound-service.azurewebsites.net
+paths:
+
+  /receiptNotices:
+    post:
+      operationId: createReceiptNotice
+      summary: Create Receipt Notice.
+      tags:
+        - inbound-service
+      requestBody:
+        description: ReceiptNotice object to be created.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptNoticeRequest'
+      responses:
+        201:
+          description: Receipt Notice creation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptNoticeResponse'
+
+  /receiptNotices/{receiptId}:
+    get:
+      operationId: getReceiptNotice
+      summary: Returns a single Receipt Notice for given Receipt ID.
+      tags:
+        - inbound-service
+      description: Get Receipt Notice details.
+      parameters:
+        - name: receiptId
+          in: path
+          description: Receipt ID should be unique to retrieve the receipt notice.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return a Receipt Notice
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptNoticeResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Updates Receipt Notice
+      operationId: updateReceiptNotice
+      parameters:
+        - name: receiptId
+          in: path
+          description: Receipt Notice ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: ReceiptNotice object to be updated.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptNoticeRequest'
+      responses:
+        200:
+          description: Receipt notice replaced successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptNoticeResponse'
+        404:
+          description: Receipt Notice not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        400:
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete Receipt Notice
+      operationId: deleteReceiptNoticeById
+      parameters:
+        - name: receiptId
+          in: path
+          description: Receipt ID.
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Delete successful.
+        404:
+          description: Receipt Notice not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /receiptNotices/{receiptId}/quickReceive:
+    post:
+      operationId: startQuickReceiving
+      summary: Start the activity of quick receiving.
+      tags:
+        - inbound-service
+      description: Starts the quick receiving activity.
+      parameters:
+        - name: receiptId
+          in: path
+          description: Unique Receipt ID to start quick receiving.
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Quick receiving in process.
+        400:
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: Receipt Notice not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      operationId: completeQuickReceiving
+      summary: Complete the activity of quick receiving.
+      tags:
+        - inbound-service
+      description: Complete the quick receiving activity.
+      parameters:
+        - name: receiptId
+          in: path
+          description: Receipt ID should be unique to retrieve the receipt notice.
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Quick receiving complete.
+        400:
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: Receipt Notice not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+
+    ErrorResponse:
+      type: object
+      properties:
+        responseId:
+          type: string
+          description: A unique identifier generated by the system for this error occurrence.
+        timestamp:
+          type: string
+          format: 'date-time'
+          description: Indicates the date and time that the error occurred. This time should be specified in UTC.
+          example: 2019-10-19T17:00:00Z
+        errors:
+          type: array
+          description: Detailed information about the error(s) that occurred.
+          items:
+            type: object
+            properties:
+              userMessage:
+                type: string
+                description: Indicates the human readable error message.
+              errorCode:
+                type: string
+                description: Indicates a unique code for this error type
+
+    ReceiptNoticeRequest:
+      type: object
+      required:
+        - receiptNotice
+      properties:
+        receiptNotice:
+          $ref: '#/components/schemas/ReceiptNotice'
+
+    ReceiptNoticeResponse:
+      type: object
+      required:
+        - receiptNotice
+      properties:
+        receiptNotice:
+          $ref: '#/components/schemas/ReceiptNotice'
+
+    ReceiptNotice:
+      type: object
+      required:
+        - asnId
+        - trailerId
+        - shipmentFrom
+        - fulfillmentCenterId
+        - receiptInventoryUnits
+      properties:
+        asnId:
+          type: string
+          description: ASN ID.
+          example: ASN0001
+        receiptStatus:
+          type: string
+          description: Receipt Notice Status.
+          example: OPEN
+          enum:
+            - OPEN
+            - INPROCESS
+            - COMPLETE
+        trailerId:
+          type: string
+          description: Trailer ID.
+          example: Trailer001
+        shipmentFrom:
+          type: string
+          description: Shipment From.
+          example: Ship001
+        fulfillmentCenterId:
+          type: string
+          description: Fulfillment Center ID.
+          example: Center001
+        expectedDate:
+          type: string
+          format: date-time
+          description: Expected Date.
+        receiptInventoryUnits:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptInventoryUnit'
+
+    ReceiptInventoryUnit:
+      type: object
+      required:
+        - inventoryId
+      properties:
+        inventoryId:
+          type: string
+          description: Inventory ID.
+          example: INV001
+        parentInventoryId:
+          type: string
+          description: Parent Inventory ID.
+          example: PINV001
+        receiptLineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptLineItem'
+
+    ReceiptLineItem:
+      type: object
+      required:
+        - lineItemNumber
+        - itemId
+        - expectedQuantity
+        - shipmentLineId
+      properties:
+        lineItemNumber:
+          type: integer
+          description: Line Item Number.
+          example: 1
+        itemId:
+          type: string
+          description: Item ID.
+          example: ITEM001
+        expectedQuantity:
+          type: integer
+          format: int
+          description: Expected Quantity.
+          example: 10
+        identifiedQuantity:
+          type: integer
+          format: int
+          default: 0
+          description: Identified Quantity.
+          example: 10
+        expireDate:
+          type: string
+          format: date
+          description: Expire Date.
+        shipmentLineId:
+          type: string
+          description: Shipment Line ID.
+          example: SPLIN001
