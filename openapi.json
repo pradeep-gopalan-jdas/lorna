@@ -1,0 +1,424 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "BY Inbound Services",
+    "description" : "This document provides the services encompassing BY Inbound services",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "https://ecom-inbound-service.azurewebsites.net"
+  } ],
+  "tags" : [ {
+    "name" : "inbound-service",
+    "description" : "Everything about Inbound Services",
+    "externalDocs" : {
+      "description" : "Find out more",
+      "url" : "http://swagger.io"
+    }
+  } ],
+  "paths" : {
+    "/receiptNotices" : {
+      "post" : {
+        "tags" : [ "inbound-service" ],
+        "summary" : "Create Receipt Notice.",
+        "operationId" : "createReceiptNotice",
+        "requestBody" : {
+          "description" : "ReceiptNotice object to be created.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReceiptNoticeRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Receipt Notice creation successful",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReceiptNoticeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/receiptNotices/{receiptId}" : {
+      "get" : {
+        "tags" : [ "inbound-service" ],
+        "summary" : "Returns a single Receipt Notice for given Receipt ID.",
+        "description" : "Get Receipt Notice details.",
+        "operationId" : "getReceiptNotice",
+        "parameters" : [ {
+          "name" : "receiptId",
+          "in" : "path",
+          "description" : "Receipt ID should be unique to retrieve the receipt notice.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Return a Receipt Notice",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReceiptNoticeResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "summary" : "Updates Receipt Notice",
+        "operationId" : "updateReceiptNotice",
+        "parameters" : [ {
+          "name" : "receiptId",
+          "in" : "path",
+          "description" : "Receipt Notice ID",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "ReceiptNotice object to be updated.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReceiptNoticeRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Receipt notice replaced successful",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReceiptNoticeResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Receipt Notice not found.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete Receipt Notice",
+        "operationId" : "deleteReceiptNoticeById",
+        "parameters" : [ {
+          "name" : "receiptId",
+          "in" : "path",
+          "description" : "Receipt ID.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Delete successful."
+          },
+          "404" : {
+            "description" : "Receipt Notice not found.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/receiptNotices/{receiptId}/quickReceive" : {
+      "put" : {
+        "tags" : [ "inbound-service" ],
+        "summary" : "Complete the activity of quick receiving.",
+        "description" : "Complete the quick receiving activity.",
+        "operationId" : "completeQuickReceiving",
+        "parameters" : [ {
+          "name" : "receiptId",
+          "in" : "path",
+          "description" : "Receipt ID should be unique to retrieve the receipt notice.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Quick receiving complete."
+          },
+          "400" : {
+            "description" : "Bad Request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Receipt Notice not found.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "inbound-service" ],
+        "summary" : "Start the activity of quick receiving.",
+        "description" : "Starts the quick receiving activity.",
+        "operationId" : "startQuickReceiving",
+        "parameters" : [ {
+          "name" : "receiptId",
+          "in" : "path",
+          "description" : "Unique Receipt ID to start quick receiving.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Quick receiving in process."
+          },
+          "400" : {
+            "description" : "Bad Request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Receipt Notice not found.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ErrorResponse" : {
+        "type" : "object",
+        "properties" : {
+          "responseId" : {
+            "type" : "string",
+            "description" : "A unique identifier generated by the system for this error occurrence."
+          },
+          "timestamp" : {
+            "type" : "string",
+            "description" : "Indicates the date and time that the error occurred. This time should be specified in UTC.",
+            "format" : "date-time"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Detailed information about the error(s) that occurred.",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorResponse_errors"
+            }
+          }
+        }
+      },
+      "ReceiptNoticeRequest" : {
+        "required" : [ "receiptNotice" ],
+        "type" : "object",
+        "properties" : {
+          "receiptNotice" : {
+            "$ref" : "#/components/schemas/ReceiptNotice"
+          }
+        }
+      },
+      "ReceiptNoticeResponse" : {
+        "required" : [ "receiptNotice" ],
+        "type" : "object",
+        "properties" : {
+          "receiptNotice" : {
+            "$ref" : "#/components/schemas/ReceiptNotice"
+          }
+        }
+      },
+      "ReceiptNotice" : {
+        "required" : [ "asnId", "fulfillmentCenterId", "receiptInventoryUnits", "shipmentFrom", "trailerId" ],
+        "type" : "object",
+        "properties" : {
+          "asnId" : {
+            "type" : "string",
+            "description" : "ASN ID.",
+            "example" : "ASN0001"
+          },
+          "receiptStatus" : {
+            "type" : "string",
+            "description" : "Receipt Notice Status.",
+            "example" : "OPEN",
+            "enum" : [ "OPEN", "INPROCESS", "COMPLETE" ]
+          },
+          "trailerId" : {
+            "type" : "string",
+            "description" : "Trailer ID.",
+            "example" : "Trailer001"
+          },
+          "shipmentFrom" : {
+            "type" : "string",
+            "description" : "Shipment From.",
+            "example" : "Ship001"
+          },
+          "fulfillmentCenterId" : {
+            "type" : "string",
+            "description" : "Fulfillment Center ID.",
+            "example" : "Center001"
+          },
+          "expectedDate" : {
+            "type" : "string",
+            "description" : "Expected Date.",
+            "format" : "date-time"
+          },
+          "receiptInventoryUnits" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ReceiptInventoryUnit"
+            }
+          }
+        }
+      },
+      "ReceiptInventoryUnit" : {
+        "required" : [ "inventoryId" ],
+        "type" : "object",
+        "properties" : {
+          "inventoryId" : {
+            "type" : "string",
+            "description" : "Inventory ID.",
+            "example" : "INV001"
+          },
+          "parentInventoryId" : {
+            "type" : "string",
+            "description" : "Parent Inventory ID.",
+            "example" : "PINV001"
+          },
+          "receiptLineItems" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ReceiptLineItem"
+            }
+          }
+        }
+      },
+      "ReceiptLineItem" : {
+        "required" : [ "expectedQuantity", "itemId", "lineItemNumber", "shipmentLineId" ],
+        "type" : "object",
+        "properties" : {
+          "lineItemNumber" : {
+            "type" : "integer",
+            "description" : "Line Item Number.",
+            "example" : 1
+          },
+          "itemId" : {
+            "type" : "string",
+            "description" : "Item ID.",
+            "example" : "ITEM001"
+          },
+          "expectedQuantity" : {
+            "type" : "integer",
+            "description" : "Expected Quantity.",
+            "format" : "int",
+            "example" : 10
+          },
+          "identifiedQuantity" : {
+            "type" : "integer",
+            "description" : "Identified Quantity.",
+            "format" : "int",
+            "example" : 10,
+            "default" : 0
+          },
+          "expireDate" : {
+            "type" : "string",
+            "description" : "Expire Date.",
+            "format" : "date"
+          },
+          "shipmentLineId" : {
+            "type" : "string",
+            "description" : "Shipment Line ID.",
+            "example" : "SPLIN001"
+          }
+        }
+      },
+      "ErrorResponse_errors" : {
+        "type" : "object",
+        "properties" : {
+          "userMessage" : {
+            "type" : "string",
+            "description" : "Indicates the human readable error message."
+          },
+          "errorCode" : {
+            "type" : "string",
+            "description" : "Indicates a unique code for this error type"
+          }
+        }
+      }
+    }
+  }
+}
